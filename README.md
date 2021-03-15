@@ -1,6 +1,6 @@
 # Node.js Upload multiple files example
 
-For more detail, please visit:
+For more detail, please visit tihs tutorial (bezkoder):
 > [How to upload multiple files in Node.js using Multer](https://bezkoder.com/node-js-upload-multiple-files/)
 
 ## Project setup
