@@ -16,14 +16,15 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-8 mt-3">
-            <h1>{{upload.title}}</h1>
           <h4>Node.js upload multiple files - 목록보기</h4>
+          <ul>
             {% for i in range(0, upload.length) %}
+                <li>{{upload[i].title}}</li>
                 {% for files in upload[i].files %}
-                <li><img src="{{ files.url }}"</li>
+                <div><img class="preview-images" width=100 src="{{ files.url }}"></div>
                 {% endfor %}
             {% endfor %}
-
+          </ul>
         </div>
       </div>
       <hr />
