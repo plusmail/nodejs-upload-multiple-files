@@ -16,6 +16,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-8 mt-3">
+            <h1>{{upload.title}}</h1>
           <h4>Node.js upload multiple files - 목록보기</h4>
             {% for i in range(0, upload.length) %}
                 {% for files in upload[i].files %}

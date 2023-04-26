@@ -7,7 +7,7 @@ const multer = require("multer");
 const fs = require('fs');
 const {uploadfiles} = require('../models')
 
-const upload = multer({ dest: 'uploads/' });
+
 router.get("/",  async (req, res) => {
 
   return res.render('index');
@@ -33,7 +33,18 @@ router.get("/list",  async (req, res) => {
   return res.render('list',{upload});
 });
 
-// router.post("/multiple-upload",  uploadController.multipleUpload);
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    }
+  }),
+});
+
+// const upload = multer({ dest: 'uploads/' });
 router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
   const { title, content } = req.body;
   console.log("=======", title, content);
@@ -41,7 +52,7 @@ router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
 
   // 파일 처리
   const uploadedFiles = req.files;
-  const uploadDir = path.join(__dirname, 'uploads');
+  const uploadDir = path.join(__dirname,'../','uploads');
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
   }
@@ -49,9 +60,11 @@ router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
   const files = [];
   for (const file of uploadedFiles) {
     const oldPath = file.path;
-    const newPath = path.join(uploadDir, file.filename);
+    const newFilename = new Date().getTime() +'_'+ file.filename;
+    const newPath = path.join(uploadDir, newFilename);
+    console.log("333333333->", newPath);
     fs.renameSync(oldPath, newPath);
-    files.push({ filename: file.filename, url: `/uploads/${file.filename}` });
+    files.push({ filename: file.filename, url: `/img/${newFilename}` });
   }
   console.log("=======3", files);
   // 글 등록
