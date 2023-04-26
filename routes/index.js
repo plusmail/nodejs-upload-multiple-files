@@ -33,54 +33,63 @@ router.get("/list",  async (req, res) => {
   return res.render('list',{upload});
 });
 
+// const upload = multer({ dest: 'uploads/' });
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/');
     },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname);
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      const fileName = `${path.basename(
+          file.originalname,
+          ext
+      )}_${Date.now()}${ext}`;
+      done(null, fileName);
     }
   }),
+  fileFilter : (req, file, cb) => {
+    const typeArray = file.mimetype.split('/');
+    const fileType = typeArray[1];
+
+    if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif' || fileType == 'webp') {
+      req.fileValidationError = null;
+      cb(null, true);
+    } else {
+      req.fileValidationError = "jpg,jpeg,png,gif,webp 파일만 업로드 가능합니다.";
+      cb(null, false)
+    }
+  },
+  limits : { fileSize: 5 * 1024 * 1024 },
 });
 
-// const upload = multer({ dest: 'uploads/' });
+
 router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
   const { title, content } = req.body;
-  console.log("=======", title, content);
   console.log("=======2", req.files);
 
-  // 파일 처리
-  const uploadedFiles = req.files;
-  const uploadDir = path.join(__dirname,'../','uploads');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+  try{
+    const files = [];
+    for (const file of req.files) {
+      files.push({ filename: file.filename, url: `/img/${file.filename}` });
+    }
+    const upload = await uploadfiles.create({
+      title,
+      content,
+      files,
+    })
+    if(upload === null){
+      console.log("게시물 등록 에러!");
+      res.status(400).json({"msg":"uploadError"});
+    }else{
+      console.log("게시물 등록 에러!");
+      res.status(200).json({"msg":"uploadSuccess"});
+    }
+  }catch (error){
+    console.error(error);
+    res.status(500).json({"msg":error});
   }
-
-  const files = [];
-  for (const file of uploadedFiles) {
-    const oldPath = file.path;
-    const newFilename = new Date().getTime() +'_'+ file.filename;
-    const newPath = path.join(uploadDir, newFilename);
-    console.log("333333333->", newPath);
-    fs.renameSync(oldPath, newPath);
-    files.push({ filename: file.filename, url: `/img/${newFilename}` });
-  }
-  console.log("=======3", files);
-  // 글 등록
-  const upload = await uploadfiles.create({
-    title,
-    content,
-    files,
-  })
-
-  const newPost = {
-    id: Date.now(),
-  };
-
-  // 데이터베이스에 글 정보 저장
-
-  res.json(newPost);
 });
 
 
