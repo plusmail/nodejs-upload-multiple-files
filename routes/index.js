@@ -8,7 +8,30 @@ const fs = require('fs');
 const {uploadfiles} = require('../models')
 
 const upload = multer({ dest: 'uploads/' });
-router.get("/", homeController.getHome);
+router.get("/",  async (req, res) => {
+
+  return res.render('index');
+});
+
+router.get("/list",  async (req, res) => {
+
+  const upload = await uploadfiles.findAll({
+
+  })
+  // let img =upload[0].files[0].url;
+  // console.log(img);
+  // for(let i =0; i < upload.length; i++){
+  //   // for(const files in upload[i]) {
+  //     console.log(upload[i].files);
+  //     for( let j=0 ; j< upload[i].files.length;j++){
+  //       console.log(upload[i].files[j].url);
+  //     }
+  //   // }
+  // }
+  // console.log("1111111->", upload[0].files[0].url);
+
+  return res.render('list',{upload});
+});
 
 // router.post("/multiple-upload",  uploadController.multipleUpload);
 router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
