@@ -83,7 +83,7 @@ router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
       console.log("게시물 등록 에러!");
       res.status(400).json({"msg":"uploadError"});
     }else{
-      console.log("게시물 등록 에러!");
+      console.log("게시물 등록!");
       res.status(200).json({"msg":"uploadSuccess"});
     }
   }catch (error){

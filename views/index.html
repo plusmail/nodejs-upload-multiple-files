@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Node.js upload multiple files</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
       div.preview-images > img {
         width: 30%;
@@ -42,9 +44,6 @@
         </div>
       </div>
     </div>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
       $(document).ready(function() {
@@ -90,6 +89,7 @@
             },
           });
           console.log(response.data);
+          // location.href="/";
         } catch (error) {
           console.error(error);
         }
