@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const homeController = require("../controllers/home");
-const uploadController = require("../controllers/upload");
+const {multipleUpload} = require("../controllers/upload");
+const {uploadController, upload} = require("../middleware/upload");
 const path = require("path");
 const multer = require("multer");
 const fs = require('fs');
@@ -35,37 +36,8 @@ router.get("/list",  async (req, res) => {
 
 // const upload = multer({ dest: 'uploads/' });
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname);
-      const fileName = `${path.basename(
-          file.originalname,
-          ext
-      )}_${Date.now()}${ext}`;
-      done(null, fileName);
-    }
-  }),
-  fileFilter : (req, file, cb) => {
-    const typeArray = file.mimetype.split('/');
-    const fileType = typeArray[1];
-
-    if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif' || fileType == 'webp') {
-      req.fileValidationError = null;
-      cb(null, true);
-    } else {
-      req.fileValidationError = "jpg,jpeg,png,gif,webp 파일만 업로드 가능합니다.";
-      cb(null, false)
-    }
-  },
-  limits : { fileSize: 5 * 1024 * 1024 },
-});
-
-
 router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
+  // req.body   req.params req.query
   const { title, content } = req.body;
   console.log("=======2", req.files);
 
@@ -91,7 +63,5 @@ router.post("/multiple-upload", upload.array('files'),  async (req, res) => {
     res.status(500).json({"msg":error});
   }
 });
-
-
 
 module.exports = router;
